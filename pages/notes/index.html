@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>便签记忆管理</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="workspace">
+    <header class="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">N</span><span>AstrBot <span class="brand-divider">/</span> Note Memory</span></div>
+      <span class="connection" id="connection">等待连接</span>
+    </header>
+    <nav class="workspace-nav" aria-label="管理功能">
+      <button class="nav-button active" data-view="memory" type="button">记忆管理</button>
+      <button class="nav-button" data-view="settings" type="button">插件设置</button>
+    </nav>
+
+    <div class="app-view" id="memory-view">
+      <section class="hero">
+        <div><p class="eyebrow">留住有用的事，放下多余的事。</p><h1>便签记忆<span class="title-dot">.</span></h1><p class="hero-description">同一用户的所有对话，共享同一份记忆。</p></div>
+        <button class="button primary" id="new-note" disabled><span aria-hidden="true">＋</span> 新建便签</button>
+      </section>
+
+      <section class="scope-panel" aria-label="用户选择">
+        <div class="scope-heading"><label for="scope">当前用户</label><button id="reload-scopes" class="text-button" type="button">刷新用户列表</button></div>
+        <div class="scope-fields"><input id="scope" list="scope-options" autocomplete="off" placeholder="选择用户，或粘贴 /note status 中的用户标识" aria-describedby="scope-hint" /><datalist id="scope-options"></datalist><button id="load-scope" class="button secondary" type="button">载入记忆</button></div>
+        <p id="scope-hint" class="hint">记忆按平台和用户 ID 隔离；同一用户的私聊与群聊对话共享便签，不同用户互不可见。</p>
+      </section>
+
+      <section class="layers" aria-label="记忆层统计">
+        <button class="layer-card short-card" data-layer="short" type="button"><span class="layer-number">01 / RECENT</span><div class="layer-middle"><h2>短期便签</h2><span id="count-short" class="count">—</span></div><p id="short-description">最近 7 天活跃的记忆</p></button>
+        <button class="layer-card archive-card" data-layer="archived" type="button"><span class="layer-number">02 / ARCHIVE</span><div class="layer-middle"><h2>归档便签池</h2><span id="count-archived" class="count">—</span></div><p>按关键词找回，召回后重新计时</p></button>
+        <button class="layer-card important-card" data-layer="important" type="button"><span class="layer-number">03 / IMPORTANT</span><div class="layer-middle"><h2>重要便签</h2><span id="count-important" class="count">—</span></div><p>明确维护，不参与自动归档</p></button>
+      </section>
+
+      <section class="library" aria-label="便签列表">
+        <div class="library-heading"><h2>记忆书架</h2><span id="result-count" class="muted">选择一个用户开始</span></div>
+        <div class="toolbar">
+          <div class="tabs" role="group" aria-label="类型筛选"><button class="tab active" data-layer="all" type="button" aria-pressed="true">全部</button><button class="tab" data-layer="short" type="button" aria-pressed="false">短期</button><button class="tab" data-layer="archived" type="button" aria-pressed="false">归档</button><button class="tab" data-layer="important" type="button" aria-pressed="false">重要</button></div>
+          <form id="search-form" class="search-form"><label class="sr-only" for="keyword">搜索正文或标签</label><input id="keyword" placeholder="搜索正文或标签…" maxlength="200" /><button class="button secondary" type="submit">筛选</button></form>
+        </div>
+        <div id="notes" class="note-grid" aria-live="polite"><div class="empty-state"><span class="empty-symbol" aria-hidden="true">▤</span><h3>给记忆一个位置</h3><p>选择用户后，在这里整理 Bot 的便签。</p></div></div>
+        <nav class="pagination" aria-label="分页"><button id="previous" class="button subtle" type="button" disabled>上一页</button><span id="page-label">第 1 / 1 页</span><button id="next" class="button subtle" type="button" disabled>下一页</button></nav>
+      </section>
+
+      <section class="maintenance" aria-label="记忆维护">
+        <div><h2>整理与维护</h2><p id="summary-status">未载入用户。</p><p id="summary-error" class="error-detail" hidden></p></div>
+        <div class="maintenance-actions"><button id="summarize" class="button secondary" type="button" disabled>立即总结</button><button id="refresh-memory" class="button secondary" type="button" disabled>刷新记忆快照</button><button id="export" class="button subtle" type="button" disabled>导出 JSON</button></div>
+      </section>
+      <footer class="footer"><p>同一用户的所有对话共享便签，各会话在首次请求时装载快照。修改后可刷新快照，让用户的所有对话重新装载。</p><p>列表浏览和上下文注入不会延长便签寿命。总结仅处理插件启用后完成的对话。</p></footer>
+    </div>
+
+    <div class="app-view" id="settings-view" hidden>
+      <section class="hero settings-hero">
+        <div><p class="eyebrow">配置与 AstrBot 插件设置保持同步</p><h1>插件设置<span class="title-dot">.</span></h1><p class="hero-description">调整记忆、总结与权限，保存后立即生效。</p></div>
+      </section>
+      <form id="settings-form">
+        <div id="settings-groups" class="settings-groups"></div>
+        <div class="settings-actions">
+          <p class="hint" id="settings-hint">设置保存在插件配置中，不会影响已有便签。</p>
+          <div><button class="button secondary" id="reload-settings" type="button">重新读取</button><button class="button primary" id="save-settings" type="submit" disabled>保存设置</button></div>
+        </div>
+        <p id="settings-error" class="error-detail" role="alert" hidden></p>
+      </form>
+    </div>
+  </main>
+
+  <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form id="editor-form">
+      <div class="dialog-heading"><div><p class="eyebrow">一条便签，一个主题</p><h2 id="editor-title">新建便签</h2></div><button id="close-editor" class="icon-button" type="button" aria-label="关闭编辑器">×</button></div>
+      <p class="editor-scope" id="editor-scope"></p>
+      <label for="note-layer">记忆层</label><select id="note-layer"><option value="short">短期便签 · 到期自动归档</option><option value="important">重要便签 · 不自动归档</option><option value="archived">归档池 · 等待按需召回</option></select>
+      <div class="field-label"><label for="note-content">便签内容</label><span id="char-count" class="muted">0 / 500</span></div><textarea id="note-content" rows="7" maxlength="500" placeholder="写下一个有用的事实、偏好或约定。" required></textarea>
+      <label for="note-tags">关键词标签 <span class="muted">（可选，空格分隔）</span></label><input id="note-tags" maxlength="120" placeholder="例如：饮食 偏好" />
+      <p class="hint">更新会替换旧内容，便签 ID 保持不变。重要便签只有显式操作才会改变。</p>
+      <p id="editor-error" class="error-detail" role="alert" hidden></p>
+      <div class="dialog-actions"><button id="cancel-editor" class="button secondary" type="button">取消</button><button id="save-note" class="button primary" type="submit">保存便签</button></div>
+    </form>
+  </dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title"><form id="delete-form"><h2 id="delete-title">删除这条便签？</h2><p id="delete-preview"></p><p class="hint">此操作不可撤销。已有会话快照不会重写，可在删除后刷新快照。</p><p id="delete-error" class="error-detail" role="alert" hidden></p><div class="dialog-actions"><button id="cancel-delete" class="button secondary" type="button">取消</button><button id="confirm-delete" class="button danger" type="submit">确认删除</button></div></form></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{
+  "short_term_days": {
+    "type": "int",
+    "description": "短期便签保留天数",
+    "hint": "从最后一次创建、更新或归档召回起计时。初始化注入和普通列表浏览不会刷新计时。重要便签永不自动归档。",
+    "default": 7
+  },
+  "auto_summary": {
+    "type": "bool",
+    "description": "启用自动对话总结",
+    "hint": "默认每 40 轮或 24 小时触发，任一阈值满足即可。只总结插件启用后完成的对话，关闭后仍可手动总结。会调用配置的 LLM，产生模型费用。",
+    "default": true
+  },
+  "summary_rounds": {
+    "type": "int",
+    "description": "自动总结的待处理对话轮数",
+    "hint": "用户发言与 Bot 最终回复合计为一轮，工具中间步骤不计数。0 关闭轮数触发。",
+    "default": 40
+  },
+  "summary_hours": {
+    "type": "float",
+    "description": "自动总结时间间隔（小时）",
+    "hint": "有待处理对话时才计时；首次从第一轮开始，之后从本批最早对话和上次总结中较晚的时间开始。后台每分钟检查，空闲时也会总结。0 关闭时间触发。",
+    "default": 24
+  },
+  "summary_provider_id": {
+    "type": "string",
+    "description": "总结使用的聊天模型",
+    "hint": "留空使用该用户最近对话采用的聊天模型。可以选择更经济的独立总结模型。",
+    "_special": "select_provider",
+    "default": ""
+  },
+  "summary_max_notes": {
+    "type": "int",
+    "description": "每批总结最多生成便签条数",
+    "default": 8
+  },
+  "summary_note_chars": {
+    "type": "int",
+    "description": "每条自动总结便签的最大字数",
+    "hint": "提示模型尽可能简洁。超长或格式错误会保留待总结原文，不会截断丢弃事实。不能大于单条便签总字数上限。",
+    "default": 200
+  },
+  "summary_batch_chars": {
+    "type": "int",
+    "description": "每批总结的对话字符预算",
+    "hint": "至少 1000。长对话分批覆盖，单次最多三批，未处理完的原文留待下次总结。",
+    "default": 24000
+  },
+  "summary_timeout": {
+    "type": "int",
+    "description": "每批总结调用超时（秒）",
+    "default": 90
+  },
+  "max_note_chars": {
+    "type": "int",
+    "description": "单条便签最大字数",
+    "hint": "工具、指令和 WebUI 共用，超过时要求拆分为多条。",
+    "default": 500
+  },
+  "injection_max_chars": {
+    "type": "int",
+    "description": "初始化记忆上下文的字符预算",
+    "hint": "至少 1000。重要便签优先、单条不截断；超出预算的条数会在快照中提示。便签很多时请提高预算，或及时整理。",
+    "default": 24000
+  },
+  "page_size": {
+    "type": "int",
+    "description": "指令列表每页条数",
+    "default": 6
+  },
+  "command_max_chars": {
+    "type": "int",
+    "description": "单条指令回复的字符上限",
+    "hint": "至少 400。列表仅显示截断预览，使用 /note show ID [分段页码] 查看完整内容。",
+    "default": 1800
+  },
+  "admin_only_manage": {
+    "type": "bool",
+    "description": "仅允许 AstrBot 管理员通过指令或工具修改便签",
+    "hint": "开启后非管理员仍可查看和关键词召回。后台总结照常运行。Pages 沿用 Dashboard 管理员登录权限。",
+    "default": false
+  },
+  "bot_manage_important": {
+    "type": "bool",
+    "description": "允许 Bot 通过工具维护重要便签",
+    "hint": "关闭后重要便签只能由用户通过指令或 Pages 新增、更新和删除。自动总结无论如何都不会修改重要便签。",
+    "default": true
+  }
+}

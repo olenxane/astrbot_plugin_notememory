@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.smoke/
+*.db
+*.db-shm
+*.db-wal
+
+# Local tests and development artifacts
+tests/
+.smoke/
+.zcode/
+NUL

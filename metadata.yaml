@@ -1,0 +1,6 @@
+name: astrbot_plugin_notememory
+display_name: 便签记忆
+desc: 三层便签记忆：短期上下文、关键词召回归档池和永久重要便签，支持自动总结、工具、指令与 Pages 管理。
+version: v1.0.0
+author: NoteMemory Contributors
+astrbot_version: ">=4.25.6,<5"
